@@ -1,0 +1,36 @@
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: forecast_user
+      POSTGRES_PASSWORD: forecast_password
+      POSTGRES_DB: food_demand
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U forecast_user -d food_demand"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  seed:
+    build: .
+    environment:
+      DATABASE_URL: postgresql+psycopg2://forecast_user:forecast_password@db:5432/food_demand
+    depends_on:
+      db:
+        condition: service_healthy
+    command: ["python", "-m", "src.data.seed_database"]
+
+  api:
+    build: .
+    environment:
+      DATABASE_URL: postgresql+psycopg2://forecast_user:forecast_password@db:5432/food_demand
+    ports:
+      - "8000:8000"
+    depends_on:
+      seed:
+        condition: service_completed_successfully
+
+volumes:
+  postgres_data:
