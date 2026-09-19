@@ -1,5 +1,6 @@
 import pandas as pd
 import joblib
+import pytest
 
 from src.models.predict import forecast_demand
 
@@ -25,3 +26,12 @@ def test_forecast_demand():
 
     assert forecast_date == pd.Timestamp("2016-04-25")
     assert isinstance(prediction, float)
+
+def test_forecast_demand_invalid_product():
+    with pytest.raises(ValueError):
+        forecast_demand(
+            "FOODS_999_999",
+            "CA_99",
+            sales,
+            model
+        )
