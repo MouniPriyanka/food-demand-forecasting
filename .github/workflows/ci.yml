@@ -1,0 +1,47 @@
+name: CI
+
+"on":
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: forecast_user
+          POSTGRES_PASSWORD: forecast_password
+          POSTGRES_DB: food_demand
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U forecast_user -d food_demand"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql+psycopg2://forecast_user:forecast_password@localhost:5432/food_demand
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Seed database
+        run: python -m src.data.seed_database
+
+      - name: Run tests
+        run: pytest
