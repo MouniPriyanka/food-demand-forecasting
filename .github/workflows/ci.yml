@@ -25,7 +25,8 @@ jobs:
 
     env:
       DATABASE_URL: postgresql+psycopg2://forecast_user:forecast_password@localhost:5432/food_demand
-
+      PYTHONPATH: .
+      
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

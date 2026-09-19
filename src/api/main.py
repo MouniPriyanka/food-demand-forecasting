@@ -3,6 +3,7 @@ import pandas as pd
 import joblib
 
 from src.models.predict import forecast_demand
+from src.data.database import load_sales
 
 app = FastAPI()
 
@@ -10,11 +11,7 @@ model = joblib.load(
     "models/demand_model.pkl"
 )
 
-sales = pd.read_csv(
-    "data/processed/food_sales_features.csv"
-)
-
-sales["date"] = pd.to_datetime(sales["date"])
+sales = load_sales()
 
 @app.get("/")
 def root():

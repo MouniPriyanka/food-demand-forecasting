@@ -1,6 +1,8 @@
 import pandas as pd
 import joblib
 
+from src.data.database import load_sales
+
 def create_forecast_features(history, forecast_date):
     latest = history.iloc[-1]
 
@@ -48,12 +50,8 @@ def main():
     print("Model type:", type(model).__name__)
 
     # Load the feature-engineered sales data
-    sales = pd.read_csv(
-        "data/processed/food_sales_features.csv"
-    )
-
-    sales["date"] = pd.to_datetime(sales["date"])
-
+    sales = load_sales()
+    
     print("Feature data loaded successfully.")
     print("Rows:", len(sales))
 
