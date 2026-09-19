@@ -113,6 +113,25 @@ The trained model is saved as:
 ```text
 models/demand_model.pkl
 ```
+## Evaluation
+
+The model was evaluated using a chronological holdout period beginning on `2016-01-25`.
+
+A simple previous-day demand baseline achieved a test MAE of **1.657 units**. The `HistGradientBoostingRegressor` achieved a test MAE of **1.436 units**, representing an approximately **13.3% reduction in MAE** compared with the baseline on the same test period.
+
+Predictions remain continuous during model evaluation rather than being rounded to whole units. This preserves the accuracy of the regression metric.
+
+For a simple inventory-oriented interpretation, predicted demand can be rounded up to the nearest whole unit. This is treated as a **demand-based stocking signal**, not a complete inventory optimization recommendation, because the current system does not model current inventory, lead times, safety stock, or ordering costs.
+
+### Evaluation findings
+
+The model captures general product and store demand levels, but it can underestimate sudden demand spikes and overestimate sudden drops.
+
+The current feature set uses recent demand history and basic calendar features. It does not yet incorporate factors such as price changes, promotions, or events, which may help explain some of the sudden changes in demand.
+
+Demand also varies substantially between products and stores. Some selected products have average predicted demand below 2 units per day, while others have substantially higher predicted demand. This demonstrates the importance of product- and store-specific forecasting.
+
+The project includes visualizations for actual versus predicted demand and product-level demand comparisons for the selected stores.
 
 ## Prediction Service
 
@@ -138,7 +157,6 @@ Trained model
       ↓
 Predicted demand
 ```
-
 ## FastAPI
 
 The model is exposed through a REST API.
