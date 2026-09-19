@@ -1,25 +1,6 @@
 import pandas as pd
 import joblib
 
-# Load the trained model
-model = joblib.load(
-    "models/demand_model.pkl"
-)
-
-print("Model loaded successfully.")
-print("Model type:", type(model).__name__)
-
-# Load the feature-engineered sales data
-sales = pd.read_csv(
-    "data/processed/food_sales_features.csv"
-)
-
-# Convert the date column to datetime
-sales["date"] = pd.to_datetime(sales["date"])
-
-print("Feature data loaded successfully.")
-print("Rows:", len(sales))
-
 def create_forecast_features(history, forecast_date):
     latest = history.iloc[-1]
 
@@ -53,6 +34,24 @@ def forecast_demand(product, store, sales, model):
     return forecast_date, forecast
 
 def main():
+    # Load the trained model
+    model = joblib.load(
+        "models/demand_model.pkl"
+    )
+
+    print("Model loaded successfully.")
+    print("Model type:", type(model).__name__)
+
+    # Load the feature-engineered sales data
+    sales = pd.read_csv(
+        "data/processed/food_sales_features.csv"
+    )
+
+    sales["date"] = pd.to_datetime(sales["date"])
+
+    print("Feature data loaded successfully.")
+    print("Rows:", len(sales))
+
     product = "FOODS_1_001"
     store = "CA_1"
 
