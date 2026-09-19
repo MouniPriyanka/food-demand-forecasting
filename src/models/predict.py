@@ -22,6 +22,11 @@ def forecast_demand(product, store, sales, model):
         (sales["store_id"] == store)
     ].sort_values("date")
 
+    if history.empty:
+        raise ValueError(
+            "Product or store not found in the dataset."
+        )
+
     forecast_date = history["date"].max() + pd.Timedelta(days=1)
 
     forecast_features = create_forecast_features(

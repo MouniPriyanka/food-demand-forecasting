@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 import pandas as pd
 import joblib
 
@@ -23,12 +23,18 @@ def root():
 
 @app.get("/forecast")
 def forecast(product: str, store: str):
-    forecast_date, predicted_demand = forecast_demand(
-        product,
-        store,
-        sales,
-        model
-    )
+    try:
+        forecast_date, predicted_demand = forecast_demand(
+            product,
+            store,
+            sales,
+            model
+        )
+    except ValueError as error:
+        raise HTTPException(
+            status_code=404,
+            detail=str(error)
+        )
 
     return {
         "product": product,
